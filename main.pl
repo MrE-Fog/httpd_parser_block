@@ -78,13 +78,20 @@ $config{'seek'} = tell(LL);
 
 close( LL );
 
+if ( $#Log < 0 ){
+	print "No Read any data, seek is end\n";
+	exit;
+}
+
 print "\nMain start\n" if ( $debug );
+print "Read Line: $#Log\n";
+
 CheckURLPatten( \@Log );
 Status4xx( \@Log );		# check log status 
 
-PrintBlockList() if ( $debug );
 Update2ApacheBlock();
 WriteConfig();
+PrintBlockList() if ( $debug );
 
 sub Status4xx{
 	# check if too many 4xx status at the same IP Address.
@@ -104,6 +111,8 @@ sub Status4xx{
 			$j =~ /^([\d\.]+[ ,])/i;
 			$UserIP = $1;
 			$IPCounter{ $UserIP }++;
+
+			next if ( ! $UserIP );
 
 			if ( $IPCounter{ $UserIP } > $config{'status4xxlimit'} ){
 				$BlockList{ $UserIP } = "4xx" ;
@@ -134,12 +143,14 @@ sub Update2ApacheBlock{
 	#SetEnvIF X-Forwarded-For "(,| |^)192\.168\.1\.1(,| |$)" DenyIP
 
 	for my $BlockIP ( keys %BlockList ){
+		print "\t\t Block IP: $BlockIP, Block item: $BlockList{$BlockIP}\n" if ( $debug );
 		$BlockIP =~ s/\./\\\./g;
-		$BlockStr = "\tSetEnvIF X-Forwarded-For \"(,| |^)".$BlockIP.'(,| |$)" DenyIP';
+		$BlockStr = "SetEnvIF X-Forwarded-For \"(,| |^)".$BlockIP.'(,| |$)" DenyIP';
 
 		# Append to apache configure file
-		$sedcmd = "sed -i 's/## insert rule ##/$BlockStr\n\t## insert rule ##\n/' $config{'apacheblockfile'}";
+		$sedcmd = 'sed -i \'s/## insert rule ##/'.$BlockStr.'\n\t## insert rule ##/\' '.$config{'apacheblockfile'};
 		print $sedcmd,"\n" if ( $debug );
+		$sedcmd = `$sedcmd`;
 	}
 
 }

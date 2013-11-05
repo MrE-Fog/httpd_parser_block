@@ -1,23 +1,42 @@
+httpd_parser_block for phorum.study-area.org
+============================================
+
 This is apache log check in http://phorum.study-area.org.
-This perl scipt can parser httpd log to found some not safe activity, and parser ip to apache block file.
+This perl scipt can parser httpd log to found some malware activity, and parser ip to apache block file.
 
 
 Check item:
 1.Client request too many 4xx web.
 
 TODO:
-Check URL include /etc/passwd
+Check URL include /etc/passwd, and see other malware patten in PATTEN(file).
 
+Run:
+1. Create config file
+	- vi config(create new), format see below.
+2. Reset 
+	- perl main.pl reset
+3. Exec this perl script in crontab
+	- */5 * * * * perl main.pl /var/log/httpd/access_log
+4. Reset everyday
+	- 01 0 * * * perl main.pl reset
+5. Reload Apache
 
-config file example:
+config file options: 
 arraylimit:1000
 	- Read 1000 line to check.
 status4xxlimit:20
-	- Limit of 4xx status in Read line, Block Rule
+	- Limit of 4xx status in Read line, Block Rule.
 apacheblockfile:/etc/httpd/conf.d/phorum-block.conf
 	- Apache configure file location.
 seek:23456
-	- Save File seek, do not modify this line
+	- Save File seek, do NOT modify this line.
+
+config file example:
+arraylimit:10000
+status4xxlimit:10
+apacheblockfile:/etc/httpd/conf.d/phorum-block.conf
+
 
 Output of Apache configure file:
 ==============================================================================================
@@ -25,7 +44,7 @@ Output of Apache configure file:
 <Directory /var/www/html/phorum.study-area.org>
 	SetEnvIF X-Forwarded-For "(,| |^)1\.11\.22\.33 (,| |$)" DenyIP
 	SetEnvIF X-Forwarded-For "(,| |^)55\.66\.77\.88 (,| |$)" DenyIP
-
+	## insert rule ##
     Order allow,deny
     Deny from env=DenyIP
     Allow from all
