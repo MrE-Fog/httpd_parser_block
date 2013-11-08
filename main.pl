@@ -4,7 +4,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 use constant PROGNAME => 'httpd_parser_block';
-use constant VERSION => '0.1.5';
+use constant VERSION => '0.1.5.1';
 
 my $help = 0;
 my $version = 0;
@@ -156,7 +156,7 @@ sub Update2ApacheBlock{
 
 	print "\tin Update2ApacheBlock function\n" if ( $debug );
 	#SetEnvIF X-Forwarded-For "(,| |^)192\.168\.1\.1(,| |$)" DenyIP
-	my @whitelist = qw(66.249.77.236)
+	my @whitelist = qw(66.249.77.236);
 
 	for my $BlockIP ( keys %BlockList ){
 		exit if ( grep(/^$BlockIP$/, @whitelist ) );	# Issue #6
