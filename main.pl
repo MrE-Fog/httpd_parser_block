@@ -11,7 +11,7 @@ exit;
 
 # global
 $conf_file = "./config";
-my $debug = 1;
+my $debug = 0;
 my %config;
 my @Log;
 my %BlockList;
@@ -84,7 +84,7 @@ if ( $#Log < 0 ){
 }
 
 print "\nMain start\n" if ( $debug );
-print "Read Line: $#Log\n";
+print "Read Line: $#Log\n" if ( $debug );
 
 CheckURLPatten( \@Log );
 Status4xx( \@Log );		# check log status 
