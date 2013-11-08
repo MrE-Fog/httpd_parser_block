@@ -13,14 +13,14 @@ Check URL include /etc/passwd, and see other malware patten in PATTEN(file).
 
 Run:
 1. Create config file
-	- vi config(create new), format see below.
+	- vi config(create new) or `cp config-example config`, format see below.
+2. Make sure you "apacheblockfile" location is correct in config.
 2. Reset 
 	- perl main.pl reset
-3. Exec this perl script in crontab
-	- */5 * * * * perl main.pl /var/log/httpd/access_log
-4. Reset everyday
+3. Exec this perl script in crontab, and reload apache.
+	- */5 * * * * perl main.pl /var/log/httpd/access_log && /etc/init.d/httpd reload
+4. Reset everyday for clean block list.
 	- 01 0 * * * perl main.pl reset
-5. Reload Apache
 
 config file options: 
 arraylimit:1000
