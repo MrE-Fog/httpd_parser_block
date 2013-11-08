@@ -142,12 +142,25 @@ sub CheckURLPatten{
 
 }
 
+sub CheckInvalidFile{
+	# Issue #5
+	# Check some patten like: /\xca\xfd\xbe\xdd\xbf\xe2.zip and status is 4xx
+	# Found 2 times the same IP, block
+	print "\tin CheckInvalidFile function\n" if ( $debug );
+	my ( $Log ) = @_;
+
+
+}
+
 sub Update2ApacheBlock{
 
 	print "\tin Update2ApacheBlock function\n" if ( $debug );
 	#SetEnvIF X-Forwarded-For "(,| |^)192\.168\.1\.1(,| |$)" DenyIP
+	my @whitelist = qw(66.249.77.236)
 
 	for my $BlockIP ( keys %BlockList ){
+		exit if ( grep(/^$BlockIP$/, @whitelist ) );	# Issue #6
+	
 		print "\t\t Block IP: $BlockIP, Block item: $BlockList{$BlockIP}\n" if ( $debug );
 		$BlockIP =~ s/\./\\\./g;
 		$BlockStr = "SetEnvIF X-Forwarded-For \"(,| |^)".$BlockIP.'(,| |$)" DenyIP';
