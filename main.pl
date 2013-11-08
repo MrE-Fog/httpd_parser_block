@@ -12,7 +12,7 @@ exit;
 
 # global
 $conf_file = abs_path('config');
-my $debug = 0;
+my $debug = 0;		#default, read config latter
 my %config;
 my @Log;
 my %BlockList;
@@ -50,6 +50,7 @@ $config{'status4xxlimit'} = 10;
 
 ReadConfig();
 $Limit = $config{'arraylimit'};
+$debug = $config{'debug'};
 
 #print "======= system configure ===========\n";
 #foreach ( keys %config ){
@@ -63,13 +64,8 @@ while( my $l = <LL> ){
 	
 	chomp $l;
 	$Log[ $count++ ] = $l;
-	#print $l;
 	if ( $count > $Limit ){
 		
-		# Read Log
-#		CheckURLPatten();
-#		Status4xx();		# check log status 
-
 		$count = 0;
 		$Log[ $count ] = $l;
 		last;
@@ -80,7 +76,7 @@ $config{'seek'} = tell(LL);
 close( LL );
 
 if ( $#Log < 0 ){
-	print "No Read any data, seek is end\n";
+	print "No Read any data, seek is end\n" if ( $debug );
 	exit;
 }
 
@@ -109,7 +105,7 @@ sub Status4xx{
 	for my $j ( @$Log ){
 		#print $j,"\n";
 		if ( $j =~ / 4\d\d /gi ){
-			$j =~ /^([\d\.]+[ ,])/i;
+			$j =~ /^([\d\.]+)[ ,]/i;
 			$UserIP = $1;
 			$IPCounter{ $UserIP }++;
 

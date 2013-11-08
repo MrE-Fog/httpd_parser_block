@@ -23,14 +23,17 @@ Run:
 	- 01 0 * * * perl main.pl reset
 
 config file options: 
+debug:0
+ - Turn on/off debug messages.
+ - default: off.
 arraylimit:1000
-	- Read 1000 line to check.
+ - Read 1000 line to check.
 status4xxlimit:20
-	- Limit of 4xx status in Read line, Block Rule.
+ - Limit of 4xx status in Read line, Block Rule.
 apacheblockfile:/etc/httpd/conf.d/phorum-block.conf
-	- Apache configure file location.
+ - Apache configure file location.
 seek:23456
-	- Save File seek, do NOT modify this line.
+ - Save File seek, do NOT modify this line.
 
 config file example:
 arraylimit:10000
