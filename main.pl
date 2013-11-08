@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+use Cwd 'abs_path';
 
 # Open & Read Log
 if ( $#ARGV < 0 ){
@@ -10,7 +11,7 @@ exit;
 }
 
 # global
-$conf_file = "./config";
+$conf_file = abs_path('config');
 my $debug = 0;
 my %config;
 my @Log;
