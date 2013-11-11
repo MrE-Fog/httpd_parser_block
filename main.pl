@@ -4,17 +4,21 @@ use Getopt::Long;
 use Pod::Usage;
 
 use constant PROGNAME => 'httpd_parser_block';
-use constant VERSION => '0.1.5';
+use constant VERSION => '0.1.6';
 
 my $help = 0;
 my $version = 0;
 my $debug = 0;		# default
 my $config;
+my $reset;
+my $clean;
 
 GetOptions(
     'help|?' => \$help,
     'version|v' => \$version,
     'config=s' => \$config,
+	'reset+' => \$reset,
+	'blcokclean+' => \$clean,
     'debug+' => \$debug
 ) or pod2usage(2);
 
@@ -43,7 +47,7 @@ $BlockFoot="
     Allow from all
 </Directory>";
 
-if ( $log_file eq 'reset' ){
+if ( $reset ){
 	# Reset config seek
 	ReadConfig($config);
 	$config{'seek'} = 0;
@@ -54,6 +58,18 @@ if ( $log_file eq 'reset' ){
 	print BLOCK_CONFIG $BlockFoot;
 	close( BLOCK_CONFIG );
 
+	exit;
+}
+
+if ( $clean ){
+
+	ReadConfig($config);
+
+	open( BLOCK_CONFIG, "> $config{'apacheblockfile'}" );
+	print BLOCK_CONFIG $BlockBanner;
+	print BLOCK_CONFIG $BlockFoot;
+	close( BLOCK_CONFIG );
+	
 	exit;
 }
 
@@ -195,12 +211,19 @@ main.pl [options] [log_file]
 
 options:
 
- --config       config file location
- --debug        turn on debug message
+ --config		config file location.
+ --debug		turn on debug message.
+ --reset		Reset seek of log file and clean block list.
+ --blockclean	Clean block list of apache file.
+
+log_file:
+
+ /var/log/httpd/access_log	
 
 example:
 
  ]# perl main.pl -c /root/config /var/log/httpd/access_log
  ]# perl main.pl -c /root/config --debug /var/log/httpd/access_log
- ]# perl main.pl -c /root/config reset
+ ]# perl main.pl -c /root/config --reset
+ ]# perl main.pl -c /root/config --blockclean
 
